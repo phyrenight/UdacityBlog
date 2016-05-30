@@ -1,21 +1,19 @@
-<!DOCTYPE HTML>
-<html lang="en">
-  <head>
-    <title></title>
-    <meta charset="utf-8">
-  </head>
-  <body>
+{% extends "base.html" %}
+{% block content %}
     <header>
       <h1 class="text-center">The Blog</h1>
+      <a href="/blog">post a blog</a>
     </header>
-    <article Class="container">
-   
+    <div>
+    {% for i in posts %}
+    <article class="container">
       <section class="row">
-          Hello World
+      {{ i.title }}
+      </section>
+      <pre class="row">
+          {{ i.post }}
       </section>
     </article>
-  </body>
-</html>
-
-
-# to escape you can {{ var | escape}}
+    {% endfor %}
+    </div>
+{% endblock %}
