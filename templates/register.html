@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{%block content %}
+{% block content %}
   <form method="POST">
     <label>
         <div>Name:</div>
@@ -10,11 +10,11 @@
         <input type="password" name="pwd">
     </label>
     <label>
-        <div>verify passeword:</div>
+        <div>Verify password:</div>
         <input type="password" name="verifypwd">
     </label>
     <label>
-        <div>email:</div>
+        <div>Email:</div>
         <input type="email" name="email" value="{{email}}">
     </label>
     <button> log in</button>

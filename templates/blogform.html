@@ -1,32 +1,26 @@
 {% extends "base.html" %}
 {% block content %}
-    <header>
-      <h1 class="text-center">The Blog</h1>
-      </header>
-      <hr>
-      <article class="container">
-        <section class="row">
-          <form method='post' class="col-sm-4 col-sm-offset-4 col-md-4 col-md-offset-4 col-lg-4 col-lg-offset-4">
-            <label>
-              <div>Title:</div>
-              <input type="text" name="title" value="{{title}}">
-              </label>
-              {% if error == True and title == "" %}
-              <div class="error">You need to enter a title</div>
-              {% endif %}
-              <br>
-            <label>
-              <div>Blog:</div>
-              <textarea name="rant" value="{{rant}}">{{rant}}</textarea>
-              </label>
-              <div> 
-              {% if error == True and rant == "" %}
-              <div class="error">You need to enter a post.</div>
-              {% endif %}
-              <br>
-            <button>Commit</button>
-            </form>
-        </section>
-      </article>
-
+  <article class="container">
+    <section class="row">
+      <form method='post' class="col-sm-4 col-sm-offset-4 col-md-4 col-md-offset-4 col-lg-4 col-lg-offset-4">
+        <label>
+          <div>Title:</div>
+          <input type="text" name="title" value="{{title}}">
+        </label>
+          {% if error == True and title == "" %}
+            <div class="error">You need to enter a title</div>
+          {% endif %}
+        <br>
+        <label>
+          <div>Blog:</div>
+          <textarea name="rant" value="{{rant}}">{{rant}}</textarea>
+        </label> 
+        {% if error == True and rant == "" %}
+          <div class="error">You need to enter a post.</div>
+        {% endif %}
+        <br>
+        <button>Commit</button>
+      </form>
+    </section>
+  </article>
 {% endblock %}
