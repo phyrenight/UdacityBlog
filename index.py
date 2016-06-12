@@ -8,7 +8,7 @@ from models import BlogPost
 
 template_dir = os.path.join(os.path.dirname(__file__), 'templates')
 jinja_env = jinja2.Environment(loader=jinja2.FileSystemLoader(template_dir),
-                                autoescape=True)
+                               autoescape=True)
 
 
 class Handler(webapp2.RequestHandler):
@@ -33,15 +33,15 @@ class MainPage(Handler):
     def post(self):
         title = self.request.get("title")
         rant = self.request.get("rant")
-        
+
     	if not title or not rant:
             error = True
-            self.render_Html(title, rant, error) 
-            
-    	else:
-            postBlog = BlogPost(title = title, post = rant)
+            self.render_Html(title, rant, error)
+
+        else:
+            postBlog = BlogPost(title=title, post=rant)
             postBlog.put()
-            self.redirect("/blogpost")
+            self.redirect("/blog")
 
 
 class BlogPage(Handler):
@@ -50,6 +50,40 @@ class BlogPage(Handler):
         self.render('blogpost.html', posts=posts)
 
 
-app = webapp2.WSGIApplication([('/blog', MainPage),
-                               ('/blogpost',BlogPage)],
-                               debug=True)
+class BlogPost(Handler):
+    def get(self):
+        pass
+
+# in the future try to merge all render_Html and get render_Htmlinto 
+# a single callable function(DRY)
+
+class SignUp(Handler):
+    def render_Html(self):
+        self.render("register.html")
+
+    def get(self):
+        self.render_Html()
+
+    def post(self):
+        name = self.request.get("name")
+        pwd = self.request.get("pwd")
+        verifypwd = self.request.get("verifypwd")
+        email = self.request.get("email")
+    
+        user = User(UserName=name, email=email)
+        # user.put()
+        self.redirect("/blog")
+
+class login(Handler):
+    def post(self):
+        pass
+
+
+class logout(Handler):
+    def post(self):
+        pass
+app = webapp2.WSGIApplication([('/blogform', MainPage),
+                              ('/blog', BlogPage),
+                              ('/post', BlogPost),
+                              ('/register',SignUp)],
+                              debug=True)

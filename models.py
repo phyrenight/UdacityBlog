@@ -1,16 +1,12 @@
-"""
-
-"""
 from google.appengine.ext import db
 
-"""
-class User(ndb.Model):
-    ""
+class User(db.Model):
+    """
         user info
-    ""
-    userName = ndb.StringProperty(required = True)
-    email = ndb.StringProperty()
-"""
+    """
+    userName = db.StringProperty(required = True)
+    email = db.StringProperty()
+
 
 class BlogPost(db.Model):
     """

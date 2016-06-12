@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{%block content %}
+  <form method="POST">
+    <label>
+        <div>Name:</div>
+        <input type="text" name="name" value="{{name}}">
+    </label>
+    <label>
+        <div>Password:</div>
+        <input type="password" name="pwd">
+    </label>
+    <label>
+        <div>verify passeword:</div>
+        <input type="password" name="verifypwd">
+    </label>
+    <label>
+        <div>email:</div>
+        <input type="email" name="email" value="{{email}}">
+    </label>
+    <button> log in</button>
+    <a href="#">cancel</a>
+  </form>
+
+{% endblock %}
