@@ -21,6 +21,9 @@ def make_hash(pwd, salt=None):
     passHash = hashlib.sha256(salt + pwd).hexdigest()
     return "{}|{}".format(passHash,salt)
 
+def check_pwd(pwd, salt):
+    pass
+
 
 class Handler(webapp2.RequestHandler):
     def write(self, *a, **kw):
@@ -99,10 +102,24 @@ class SignUp(Handler):
             #user.put()
             self.redirect("/blog")
 
-class login(Handler):
-    def post(self):
-        pass
+class Login(Handler):
+    def render_Html(self, name="", pwd="", error=False):
+        self.render("login.html", name=name, pwd=pwd, error=error)
 
+    def get(self):
+        self.render_Html()
+
+    def post(self):
+        name = self.request.get("name")
+        pwd = self.request.get("pwd")
+        uname = db.GqlQuery("select * from User")
+        """
+        for i in Uname:
+            if name in i.userName:
+                error = True
+                self.render_Html(name, email, error)
+        else:
+        """
 
 class logout(Handler):
     def post(self):
@@ -110,5 +127,6 @@ class logout(Handler):
 app = webapp2.WSGIApplication([('/blogform', MainPage),
                               ('/blog', BlogPage),
                               ('/post', BlogPost),
-                              ('/register',SignUp)],
+                              ('/register', SignUp),
+                              ('/login', Login)],
                               debug=True)
