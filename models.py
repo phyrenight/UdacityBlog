@@ -6,13 +6,13 @@ class User(db.Model):
     """
     userName = db.StringProperty(required = True)
     email = db.StringProperty()
-
+    passHash = db.StringProperty()
 
 class BlogPost(db.Model):
     """
          blog posts
     """
-   # user = ndb.KeyProperty(required = True kind = 'User')
+   # user = ndb.KeyProperty(required = True, kind = 'User')
     title = db.StringProperty(required = True)
     post = db.TextProperty(required = True)
     dateTime = db.DateTimeProperty(auto_now_add = True)

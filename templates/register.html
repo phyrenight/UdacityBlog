@@ -5,20 +5,29 @@
         <div>Name:</div>
         <input type="text" name="name" value="{{name}}">
     </label>
+    {% if error == True and name == "" %}
+      <div class="error">A name must be entered.</div>
+    {% endif %}
+    <br>
     <label>
         <div>Password:</div>
         <input type="password" name="pwd">
     </label>
+    <br>
     <label>
         <div>Verify password:</div>
         <input type="password" name="verifypwd">
     </label>
+    {% if error == True %}
+        <div class="error">Passwords must match. </div>
+    {% endif %}
+    <br>
     <label>
         <div>Email:</div>
         <input type="email" name="email" value="{{email}}">
     </label>
+    <br>
     <button> log in</button>
     <a href="#">cancel</a>
   </form>
-
 {% endblock %}
