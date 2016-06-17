@@ -3,14 +3,20 @@
 <form method="post" class="container">
   <label>
    <div>Name:</div>
-   <input type="text" name="pwd">
+   <input type="text" name="name" value="{{name}}">
   </label>
+  {% if error == True and name == "" %}
+    <div class="error"> Incorrect username.</div>
+  {% endif %}
   <br>
   <label>
     <div>Password:</div>
     <input type="password" name="pwd">
   </label>
+  {% if error == True and not name %}
+    <div class="error">Incorrect password.</div>
+  {% endif %}
   <br>
-  <button>Submit</button><a href="#">Cancel</a>
+  <button>Submit</button><a href="/blog">Cancel</a>
 </form>
 {% endblock %}

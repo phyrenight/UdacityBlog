@@ -6,11 +6,13 @@ import webapp2
 import hashlib
 
 from google.appengine.ext import db
-from models import BlogPost, User
+from models import UsersBlogPost, User
 
 template_dir = os.path.join(os.path.dirname(__file__), 'templates')
 jinja_env = jinja2.Environment(loader=jinja2.FileSystemLoader(template_dir),
-                               autoescape=True)
+                               autoescape=True,)
+jinja_env.globals['url_for'] = webapp2.uri_for
+
 
 def get_salt():
    return  "".join(random.choice(string.ascii_uppercase + string.ascii_lowercase) for i in range(5))
@@ -21,8 +23,13 @@ def make_hash(pwd, salt=None):
     passHash = hashlib.sha256(salt + pwd).hexdigest()
     return "{}|{}".format(passHash,salt)
 
-def check_pwd(pwd, salt):
-    pass
+def validate_pwd(pwd, passHash):
+    line = passHash.find('|')
+    saltWord = passHash[line+1:]
+    if passHash == make_hash(pwd, saltWord):
+        return True
+    else:
+        return False
 
 
 class Handler(webapp2.RequestHandler):
@@ -53,20 +60,30 @@ class MainPage(Handler):
             self.render_Html(title, rant, error)
 
         else:
-            postBlog = BlogPost(title=title, post=rant)
+            postBlog = UsersBlogPost(title=title, bpost=rant)
+            #postBlog.title = title
+            #postBlog.bpost = rant
             postBlog.put()
-            self.redirect("/blog")
+            page = "/blog/{}".format(str(postBlog.key().id()))
+            self.redirect(page)
 
 
 class BlogPage(Handler):
     def get(self):
-        posts = db.GqlQuery("select * from BlogPost")
+        posts = db.GqlQuery("select * from UsersBlogPost")
         self.render('blogpost.html', posts=posts)
 
 
 class BlogPost(Handler):
-    def get(self):
-        pass
+    def render_Html(self, postid):
+        self.render("singlepost.html", postid=postid)
+
+    def get(self, postid):
+        keys = db.Key.from_path('UsersBlogPost', int(postid))
+        print type(postid)
+        post = db.get(keys)
+        print post
+        self.render_Html(post)
 
 # in the future try to merge all render_Html and get render_Htmlinto 
 # a single callable function(DRY)
@@ -99,12 +116,14 @@ class SignUp(Handler):
             pwdHash = make_hash(name, pwd)
             print pwdHash
             user = User(userName=name, email=email, passHash=pwdHash)
-            #user.put()
+           # self.request.cookies.get()
+            #self.response.headers.addheader('Set-Cookie')
+            user.put()
             self.redirect("/blog")
 
 class Login(Handler):
-    def render_Html(self, name="", pwd="", error=False):
-        self.render("login.html", name=name, pwd=pwd, error=error)
+    def render_Html(self, name="", error=False):
+        self.render("login.html", name=name, error=error)
 
     def get(self):
         self.render_Html()
@@ -112,21 +131,25 @@ class Login(Handler):
     def post(self):
         name = self.request.get("name")
         pwd = self.request.get("pwd")
-        uname = db.GqlQuery("select * from User")
-        """
-        for i in Uname:
-            if name in i.userName:
-                error = True
-                self.render_Html(name, email, error)
-        else:
-        """
 
+        # add try statement to handle error when a user is not in db 
+        uname = db.GqlQuery("select * from User WHERE userName =:1", name)[0]
+        print name
+        print uname.userName
+       
+        if name != uname.userName or not validate_pwd(pwd, uname.userName):
+            print "hello world"
+            error = True
+            name = ""
+            self.render_Html(name, error)
+        
 class logout(Handler):
     def post(self):
         pass
+
 app = webapp2.WSGIApplication([('/blogform', MainPage),
-                              ('/blog', BlogPage),
-                              ('/post', BlogPost),
-                              ('/register', SignUp),
+                              ('/blog', BlogPage), # main
+                              ('/blog/([0-9]+)', BlogPost), # single post
+                              ('/SignUp', SignUp),
                               ('/login', Login)],
                               debug=True)

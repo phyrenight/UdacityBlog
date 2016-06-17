@@ -4,13 +4,13 @@
     {% for i in posts %}
     <article class="container">
       <section class="row">
-      <a href="/">{{ i.title }}</a>
-      {{ i }}
+      <h1>{{ i.title }}</h1>
+      {{ i.title }}
       </section>
-      <pre class="row">
-          {{ i.post }}
+      <pre class="row"><!-- Pre keeps the post format, like the indentation -->
+          {{ i.bpost }}
+      </pre>
       </section>
     </article>
     {% endfor %}
-  </div>
-{% endblock %}
+    {% endblock %}

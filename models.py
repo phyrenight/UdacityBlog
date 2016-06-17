@@ -8,15 +8,18 @@ class User(db.Model):
     email = db.StringProperty()
     passHash = db.StringProperty()
 
-class BlogPost(db.Model):
+class UsersBlogPost(db.Model):
     """
          blog posts
     """
-   # user = ndb.KeyProperty(required = True, kind = 'User')
+   # user = db.KeyProperty(required = True, kind = 'User')
     title = db.StringProperty(required = True)
-    post = db.TextProperty(required = True)
+    bpost = db.TextProperty(required = True)
     dateTime = db.DateTimeProperty(auto_now_add = True)
-   # postId = db.IntegerProperty()
+
+# def blogKey(name = 'default'):
+#    return db.Key.from_path('blogs', name)
+
 """
 class Comment(ndb.Model):
     
