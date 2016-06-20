@@ -17,11 +17,13 @@ jinja_env.globals['url_for'] = webapp2.uri_for
 def get_salt():
    return  "".join(random.choice(string.ascii_uppercase + string.ascii_lowercase) for i in range(5))
 
+
 def make_hash(pwd, salt=None):
     if not salt:
         salt = get_salt()
     passHash = hashlib.sha256(salt + pwd).hexdigest()
     return "{}|{}".format(passHash,salt)
+
 
 def validate_pwd(pwd, passHash):
     line = passHash.find('|')
@@ -30,6 +32,8 @@ def validate_pwd(pwd, passHash):
         return True
     else:
         return False
+
+
 
 
 class Handler(webapp2.RequestHandler):
@@ -43,6 +47,9 @@ class Handler(webapp2.RequestHandler):
     def render(self, template, **kw):
         self.write(self.render_str(template, **kw))
 
+    def check_cookie(self, name):
+    cookieVal = self.request.cookies.get(name)
+    return cookieVal
 
 class MainPage(Handler):
     def render_Html(self, title="", rant="", error=""):
@@ -80,9 +87,7 @@ class BlogPost(Handler):
 
     def get(self, postid):
         keys = db.Key.from_path('UsersBlogPost', int(postid))
-        print type(postid)
         post = db.get(keys)
-        print post
         self.render_Html(post)
 
 # in the future try to merge all render_Html and get render_Htmlinto 
@@ -114,12 +119,19 @@ class SignUp(Handler):
 
         else:
             pwdHash = make_hash(name, pwd)
-            print pwdHash
             user = User(userName=name, email=email, passHash=pwdHash)
-           # self.request.cookies.get()
-            #self.response.headers.addheader('Set-Cookie')
-            user.put()
-            self.redirect("/blog")
+            self.response.headers.add_header('Set-Cookie',
+                '{}={}; Path=/'.format(name, pwdHash))
+            # user.put()
+            self.redirect("/welcome?username={}".format(name))
+
+class Welcome(Handler):
+    def get(self):
+        user = self.request.get('username')
+        if username is not None:
+            self.render("welcome.html", user=user)
+        else:
+            self.redirect("/Signup")
 
 class Login(Handler):
     def render_Html(self, name="", error=False):
@@ -133,23 +145,30 @@ class Login(Handler):
         pwd = self.request.get("pwd")
 
         # add try statement to handle error when a user is not in db 
-        uname = db.GqlQuery("select * from User WHERE userName =:1", name)[0]
-        print name
-        print uname.userName
-       
+        uname = db.GqlQuery("select * from User WHERE userName =:1", name)[0]       
         if name != uname.userName or not validate_pwd(pwd, uname.userName):
-            print "hello world"
+
             error = True
             name = ""
             self.render_Html(name, error)
-        
-class logout(Handler):
-    def post(self):
-        pass
+
+        else:
+            self.response.headers.add_header('Set-Cookie',
+                 '{}={}; Path=/'.format(name))
+            self.redirect('/blog')    
+
+
+class Logout(Handler):
+    def get(self):
+        self.response.headers.add_header('Set-Cookie',
+                                          "username=; Path=/")
+        self.redirect('/blog')
 
 app = webapp2.WSGIApplication([('/blogform', MainPage),
                               ('/blog', BlogPage), # main
                               ('/blog/([0-9]+)', BlogPost), # single post
                               ('/SignUp', SignUp),
-                              ('/login', Login)],
+                              ('/login', Login),
+                              ('/welcome', Welcome),
+                              ('/logout', Logout)],
                               debug=True)

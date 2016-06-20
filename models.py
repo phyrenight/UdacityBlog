@@ -17,8 +17,6 @@ class UsersBlogPost(db.Model):
     bpost = db.TextProperty(required = True)
     dateTime = db.DateTimeProperty(auto_now_add = True)
 
-# def blogKey(name = 'default'):
-#    return db.Key.from_path('blogs', name)
 
 """
 class Comment(ndb.Model):
