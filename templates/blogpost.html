@@ -5,11 +5,51 @@
     <article class="container">
       <section class="row">
       <h1>{{ i.title }}</h1>
-      {{ i.title }}
       </section>
-      <pre class="row"><!-- Pre keeps the post format, like the indentation -->
+      <section class="row">
+      <pre class=""><!-- Pre keeps the post format, like the indentation -->
           {{ i.bpost }}
       </pre>
+      </section>
+      <form class="row">
+        <button class="">Like</button>
+      </form>
+      <!-- view comments -->
+      <section class="comments">
+      {% for n in comment %}
+      <div class="container">
+        <div class="row">
+          <h4> {{ n.title }}</h4>
+        </div>
+          <div class="row">
+          <div class="#">{{ n.comment }}</div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="#">
+          <p>{{ n.user }}</p>
+          <p>{{ n.dateTime }}</p>
+          <button>Edit</button><button>Delete</button>
+        </div>
+      </div>
+      {% endfor %}
+      </section>
+      <section class="NewComment">
+        <div class="container">
+          <div class="row">
+            <form method="POST">
+              <label>
+                <div>Title:</div>
+                <input type="text" name="Ctitle" value="{{Ctitle}}">
+              </label>
+              <label>
+                <div>Comment</div>
+                <textarea name="comment" value="{{comment}}"></textarea>
+              </label>
+                <button>Submit</button><a href="/blog">Cancel</a>
+            </form>
+          </div>
+        </div>
       </section>
     </article>
     {% endfor %}

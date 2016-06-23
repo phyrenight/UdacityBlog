@@ -12,7 +12,7 @@ class UsersBlogPost(db.Model):
     """
          blog posts
     """
-   # user = db.KeyProperty(required = True, kind = 'User')
+    #user = db.StringProperty(required = True)
     title = db.StringProperty(required = True)
     bpost = db.TextProperty(required = True)
     dateTime = db.DateTimeProperty(auto_now_add = True)

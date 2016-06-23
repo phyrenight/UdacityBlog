@@ -34,8 +34,6 @@ def validate_pwd(pwd, passHash):
         return False
 
 
-
-
 class Handler(webapp2.RequestHandler):
     def write(self, *a, **kw):
         self.response.out.write(*a, **kw)
@@ -48,8 +46,8 @@ class Handler(webapp2.RequestHandler):
         self.write(self.render_str(template, **kw))
 
     def check_cookie(self, name):
-    cookieVal = self.request.cookies.get(name)
-    return cookieVal
+        cookieVal = self.request.cookies.get(name)
+        return cookieVal
 
 class MainPage(Handler):
     def render_Html(self, title="", rant="", error=""):
@@ -68,8 +66,6 @@ class MainPage(Handler):
 
         else:
             postBlog = UsersBlogPost(title=title, bpost=rant)
-            #postBlog.title = title
-            #postBlog.bpost = rant
             postBlog.put()
             page = "/blog/{}".format(str(postBlog.key().id()))
             self.redirect(page)
