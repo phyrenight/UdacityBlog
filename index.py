@@ -65,17 +65,48 @@ class MainPage(Handler):
             self.render_Html(title, rant, error)
 
         else:
-            postBlog = UsersBlogPost(title=title, bpost=rant)
+            postBlog = UsersBlogPost(title=title, bpost=rant) # add user
+            # postBlog.user = 
             postBlog.put()
             page = "/blog/{}".format(str(postBlog.key().id()))
             self.redirect(page)
 
 
 class BlogPage(Handler):
+    """
+       Main blog page
+    """
     def get(self):
         posts = db.GqlQuery("select * from UsersBlogPost")
         self.render('blogpost.html', posts=posts)
+        # cookieVal = self.check_cookie()
+    
+    def post(self):
+        """
+            test
+        """
+        post = self.request.get("like")
+        print post
 
+
+class EditPost(Handler):
+    """
+        edits post in the database.
+    """
+    def render_Html(self, title="", rant="", error=False):
+        self.render('blogform.html')
+
+    def get(self):
+        self.render_Html()
+
+    def post(self):
+        title = self.request.get("title")
+        rant = self.request.get("rant")
+        if title is None or rant is None:
+
+            self.render_Html()
+        else:
+            self.redirect("/blog")
 
 class BlogPost(Handler):
     def render_Html(self, postid):
@@ -166,5 +197,6 @@ app = webapp2.WSGIApplication([('/blogform', MainPage),
                               ('/SignUp', SignUp),
                               ('/login', Login),
                               ('/welcome', Welcome),
-                              ('/logout', Logout)],
+                              ('/logout', Logout),
+                              ('/editpost', EditPost)],
                               debug=True)
