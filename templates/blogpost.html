@@ -14,6 +14,10 @@
       <form class="row" method="POST">
         <button class="" name="like" value="{{ i.key().id() }}">Like</button>
       </form>
+      <form method="GET">
+        <a href="/editpost/{{i.key().id() }}" name="edit" value="{{ i.key().id() }}">Edit</a>
+        <a href="/delete/{{ i.key().id() }}" class="delete">Delete</a>
+      </form>
       <!-- view comments -->
       <section class="comments">
       {% for n in comment %}
@@ -70,23 +74,6 @@
         </div>
       </div>
       {% endfor %}
-      </section>
-      <section class="NewComment">
-        <div class="container">
-          <div class="row">
-            <form method="POST">
-              <label>
-                <div>Title:</div>
-                <input type="text" name="Ctitle" value="{{Ctitle}}">
-              </label>
-              <label>
-                <div>Comment</div>
-                <textarea name="comment" value="{{comment}}"></textarea>
-              </label>
-                <button>Submit</button><a href="/blog">Cancel</a>
-            </form>
-          </div>
-        </div>
       </section>
     </article>
     {% endblock %}

@@ -94,18 +94,30 @@ class EditPost(Handler):
         edits post in the database.
     """
     def render_Html(self, title="", rant="", error=False):
-        self.render('blogform.html')
+        self.render('blogform.html', title=title, rant=rant, error=error)
 
-    def get(self):
-        self.render_Html()
+    def get(self, postids):
+        keys = db.Key.from_path('UsersBlogPost', int(postids))
+        post = db.get(keys)
+        title = post.title
+        rant = post.bpost
+        self.render_Html( title=title, rant=rant)
 
-    def post(self):
+    def post(self, postids):
         title = self.request.get("title")
         rant = self.request.get("rant")
         if title is None or rant is None:
-
-            self.render_Html()
+            error = True
+            self.render_Html(title=title, rant=rant, error=error)
         else:
+            keys = db.Key.from_path('UsersBlogPost', int(postids))
+            post = db.get(keys)
+            print post
+            post.title = title
+            print post.bpost
+            post.bpost = rant
+            print post.bpost
+            post.put()
             self.redirect("/blog")
 
 class BlogPost(Handler):
@@ -198,5 +210,5 @@ app = webapp2.WSGIApplication([('/blogform', MainPage),
                               ('/login', Login),
                               ('/welcome', Welcome),
                               ('/logout', Logout),
-                              ('/editpost', EditPost)],
+                              ('/editpost/([0-9]+)', EditPost)],
                               debug=True)
