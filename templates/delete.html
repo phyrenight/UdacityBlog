@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="container">
+  <div class="row">
+    <p>Are you sure you want to <span class="delete">delete {{ title }}</span>
+  </div>
+  <div class="row">
+  <form method="POST">
+    <button name"delete" value="{{ title }}">Commit</button><a href="/blog">Cancel</a>
+  </form>
+</div>
+{% endblock %}

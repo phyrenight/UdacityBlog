@@ -120,6 +120,26 @@ class EditPost(Handler):
             post.put()
             self.redirect("/blog")
 
+
+class DeletePost(Handler):
+    def render_Html(self, title=""):
+        self.render("delete.html", title=title)
+
+    def get(self, postid):
+        keys = db.Key.from_path('UsersBlogPost', int(postid))
+        post = db.get(keys)
+        title = post.title
+        print "bye"
+        self.render_Html(title=title)        
+
+    def post(self, postid):
+        print "hi"
+        keys = db.Key.from_path('UsersBlogPost', int(postid))
+        post = db.get(keys)
+        print post
+        post.delete()
+        self.redirect('/blog')
+
 class BlogPost(Handler):
     def render_Html(self, postid):
         self.render("singlepost.html", postid=postid)
@@ -210,5 +230,6 @@ app = webapp2.WSGIApplication([('/blogform', MainPage),
                               ('/login', Login),
                               ('/welcome', Welcome),
                               ('/logout', Logout),
-                              ('/editpost/([0-9]+)', EditPost)],
+                              ('/editpost/([0-9]+)', EditPost),
+                              ('/delete/([0-9]+)', DeletePost)],
                               debug=True)
