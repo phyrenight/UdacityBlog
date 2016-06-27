@@ -4,23 +4,32 @@
     {% for i in posts %}
     <article class="container">
       <section class="row">
-      <h1>{{ i.title }}</h1>
+      <h1><a href="/blog/{{ i.key().id()}}">{{ i.title }}</a></h1>
+      </section>
+      <section class="row">
+      {{ i.user }}
+      {{ i.dateTime.strftime("%b %d %Y")}}
       </section>
       <section class="row">
       <pre class=""><!-- Pre keeps the post format, like the indentation -->
           {{ i.bpost }}
       </pre>
       </section>
+      {% if user != "" %}
+        {% if user != i.user %}
       <form class="row" method="POST">
         <button class="" name="like" value="{{ i.key().id() }}">Like</button>
       </form>
+        {% else %}
       <form method="GET">
-        <a href="/editpost/{{i.key().id() }}" name="edit" value="{{ i.key().id() }}">Edit</a>
-        <a href="/delete/{{ i.key().id() }}" class="delete">Delete</a>
+        <a href="/editpost/{{ i.key().id() }}" name="edit" value="EditPost">Edit</a>
+        <a href="/delete/{{ i.key().id() }}" class="delete" name="delete" value="deletePost">Delete</a>
       </form>
+        {% endif %}
+      {% endif %}
       <!-- view comments -->
       <section class="comments">
-      {% for n in comment %}
+      {% for n in comments %}
       <div class="container">
         <div class="row">
           <h4> {{ n.title }}</h4>
@@ -32,12 +41,13 @@
       <div class="row">
         <div class="#">
           <p>{{ n.user }}</p>
-          <p>{{ n.dateTime }}</p>
-          <button>Edit</button><button>Delete</button>
+          <p>{{ n.dateTime.strftime("%b %d %Y") }}</p>
+          <a href="/editpost/{{ n.key().id() }}">Edit</a><a href="/delete/ {{ n.key().id() }}">Delete</a>
         </div>
       </div>
       {% endfor %}
       </section>
+      {% if user != "" %}
       <section class="NewComment">
         <div class="container">
           <div class="row">
@@ -46,34 +56,18 @@
                 <div>Title:</div>
                 <input type="text" name="Ctitle" value="{{Ctitle}}">
               </label>
+              <br>
               <label>
                 <div>Comment</div>
                 <textarea name="comment" value="{{comment}}"></textarea>
               </label>
-                <button>Submit</button><a href="/blog">Cancel</a>
+              <br>
+                <button name="postid" value="{{ i.key().id() }}">Submit</button><a href="/blog">Cancel</a>
             </form>
           </div>
         </div>
       </section>
-      {% endfor %}            <!-- view comments -->
-      <section class="comments">
-      {% for n in comment %}
-      <div class="container">
-        <div class="row">
-          <h4> {{ n.title }}</h4>
-        </div>
-          <div class="row">
-          <div class="#">{{ n.comment }}</div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="#">
-          <p>{{ n.user }}</p>
-          <p>{{ n.dateTime }}</p>
-          <button>Edit</button><button>Delete</button>
-        </div>
-      </div>
-      {% endfor %}
-      </section>
+      {% endif %}
     </article>
+    {% endfor %}
     {% endblock %}

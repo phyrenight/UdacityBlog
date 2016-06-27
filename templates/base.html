@@ -10,11 +10,15 @@
   </head>  
   <body>
     <header class="container">
-      <h1 class="text-center">The Blog</h1>
+      <h1 class="text-center"><a href="/blog" class="title">The Blog</a></h1>
       <div class="row">
+      {% if user == "" %}
         <a href="/login">login</a>
         <a href="/SignUp">Sign up</a>
-        <a href="/blogform">post a blog</a>
+      {% else %}
+        <div><a href="/logout">logout</a><span>({{user}})</span>
+        <a href="/blogform">post a blog</a></div>
+      {% endif %}
       </div>
     </header>
     <hr>

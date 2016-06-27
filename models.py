@@ -4,34 +4,38 @@ class User(db.Model):
     """
         user info
     """
-    userName = db.StringProperty(required = True)
+    userName = db.StringProperty(required=True)
     email = db.StringProperty()
     passHash = db.StringProperty()
+    cookieSalt = db.StringProperty()
 
 class UsersBlogPost(db.Model):
     """
          blog posts
     """
-    #user = db.StringProperty(required = True)
-    title = db.StringProperty(required = True)
-    bpost = db.TextProperty(required = True)
-    dateTime = db.DateTimeProperty(auto_now_add = True)
+    user = db.StringProperty()
+    title = db.StringProperty(required=True)
+    bpost = db.TextProperty(required=True)
+    dateTime = db.DateTimeProperty(auto_now_add=True)
 
 
-"""
-class Comment(ndb.Model):
-    
+
+class Comments(db.Model):
+    """
        comments on blog posts
-    
-        user = ndb.KeyProperty(required = True, kind = 'User')
-        comment = ndb.TextProperty(required = True)
-        dateTime = ndb.DateTimeProperty(auto_now_add = True)
-        title = ndb.StringProperty()
-        id = ndb.keyProperty(required = True, kind='BlogPost')
+    """
+    user = db.StringProperty(required = True)
+    comment = db.TextProperty(required=True)
+    dateTime = db.DateTimeProperty(auto_now_add=True)
+    title = db.StringProperty(required=True)
+    commentId = db.StringProperty(required=True) # relatted to blog post
 
     @classmethod
-    def createComment(cls)
-    comment = Comment(user = user,
+    def createComment(cls):
+        comment = Comment(user = user,
                       title = title,
                       comment = comment)
-"""
+        comment.put()
+
+    def deleteComment(cls, commentid):
+        pass

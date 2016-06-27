@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
-<h2>{{ postid.title }}</h2> <div>{{ postid.dateTime.strftime("%b %d, %Y")}}</div>
+<h2>{{ postid.title }}</h2><div>{{ postid.user}} <div>{{ postid.dateTime.strftime("%b %d, %Y")}}</div>
 <hr>
+
 <pre>{{ postid.bpost }}</pre>
 {% endblock %}
