@@ -153,12 +153,23 @@ class EditPost(Handler):
 
     def get(self, postids):
         if self.get_username('username'):
-            keys = db.Key.from_path('UsersBlogPost', int(postids))
-            post = db.get(keys)
-            rant = post.bpost
-            title = post.title
-            user =  self.get_username('username')  # add check for a user logged in
-            self.render_Html( title=title, rant=rant, user=user)
+            edit = self.request.get("edit")
+            print edit
+            if edit != "":
+                print "Hello"
+                keys = db.Key.from_path('UsersBlogPost', int(postids))
+                post = db.get(keys)
+                rant = post.bpost
+                title = post.title
+                user =  self.get_username('username')  # add check for a user logged in
+                self.render_Html( title=title, rant=rant, user=user)
+            else:
+                keys = db.Key.from_path("Comments", int(postids))
+                comment = db.get(keys)
+                rant = comment.comment
+                title = comment.title
+                user = self.get_username('username')
+                self.render_Html(title=title, rant=rant, user=user)
         else:
             self.redirect('/login')
 
@@ -209,8 +220,9 @@ class DeletePost(Handler):
 
 
 class BlogPost(Handler):
-    def render_Html(self, post="", user="", comments=""):
-        self.render("singlepost.html", post=post, user=user, comments=comments)
+    def render_Html(self, post="", user="", comments="", testKey="", task=""):
+        self.render("singlepost.html", post=post, user=user, comments=comments,
+                     editKey=testKey, task=task)
 
     def get_post_comments(self):
         return db.GqlQuery("select * from Comments")
@@ -224,26 +236,50 @@ class BlogPost(Handler):
         user = self.get_username('username')
         comments = db.GqlQuery("select * from Comments")
         post = self.get_posts(postid)
-        self.render_Html(post, user, comments)
+        task = self.request.get('task')
+        if task == "EditComment":
+            editKey = str(self.request.get('edit'))
+            testKey = db.Key.from_path('Comments', int(editKey))
+            self.render_Html(post, user, comments, testKey, task)
+        
+        elif task == "DeleteComment":
+            print "hi"
+        else:
+            self.render_Html(post, user, comments)
     
     def test_for_none(self, item):  # move to handle and update other classes
         if item is None or item == "":
             return True
 
     def post(self, postid):
-        error = False
-        user = self.get_username("username")
-        title = self.request.get('Ctitle')
-        comment = self.request.get('comment')  # form comment
-        comments = db.GqlQuery("select * from Comments") # comments stored in db
-        post = self.get_posts(postid)
-        if self.test_for_none(comment) or self.test_for_none(title):
-            print "hi"
-            error=True
-            self.render('singlepost.html', Ctitle=title, comment=comment,
-                         user=user, comments=comments, error=error, post=post)
+        task = self.request.get('task')
+        if task == 'EditComment':
+            editKey = self.request.get('edit')
+            Etitle = self.request.get('Etitle')
+            Ecomments = self.request.get('Ecomment') 
+            commentKey = db.Key.from_path('Comments', int(editKey))
+            commentEdit = db.get(commentKey)
+            commentEdit.comment = Ecomments
+            commentEdit.title = Etitle
+            commentEdit.put()
+            return self.redirect('/blog')
+        elif task =='DeleteComment':
+            print "bye"
         else:
-            self.render('singlepost.html', post=post, user=user, comments=comments)
+            error = False
+            user = self.get_username("username")
+            title = self.request.get('Ctitle')
+            comment = self.request.get('comment')  # form comment
+            comments = db.GqlQuery("select * from Comments") # comments stored in db
+            post = self.get_posts(postid)
+            if self.test_for_none(comment) or self.test_for_none(title):
+                error=True
+                self.render('singlepost.html', Ctitle=title, comment=comment,
+                            user=user, comments=comments, error=error,
+                            post=post)
+            else:
+                self.render('singlepost.html', post=post, user=user,
+                            comments=comments)
 
 
 # in the future try to merge all render_Html and get render_Htmlinto 
@@ -311,7 +347,8 @@ class Login(Handler):
             error = True
             name = ""
             self.render_Html(name, error)
-
+        elif True:
+            pass
         else:
             self.response.headers.add_header('Set-Cookie',
                  '{}={}; Path=/'.format("username", name))

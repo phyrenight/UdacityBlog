@@ -2,20 +2,42 @@
 {% block content %}
 <h2>{{ post.title }}</h2><div>{{ post.user}} <div>{{ post.dateTime.strftime("%b %d, %Y")}}</div>
 <hr>
-
 <pre>{{ post.bpost }}</pre>
+
+<h3>Comments</h3>
 {% for i in comments %}
-<h3>{{i.title}}</h3>
-<p>{{ i.comment }}</p>
-<div>{{ i.user }}</div>
-<div>{{i.dateTime.strftime("%b %d %Y")}}
+{% if editKey == i.key() and task == "EditComment" %}
+  <form method="POST">
+    <input type="hidden" name="task" value="EditComment">
+    <label>
+      <div>Title:</div>
+      <input type="text" name="Etitle" value="{{ i.title }}">
+    </label>
+    <label>
+      <div>Comment:</div>
+      <textarea name="Ecomment" value="{{ i.comment }}">{{ i.comment }}</textarea>
+    </label>
+    <button name="edit" value="{{ editKey }}">Submit</button>
+    <a href="/blog/{{ post.key().id() }}">Cancel</a>
+  </form>
+
+{% else %}
+  <h3>{{i.title}}</h3>
+  <p>{{ i.comment }}</p>
+  <div>{{ i.user }}</div>
+  <div>{{i.dateTime.strftime("%b %d %Y")}}</div>
+
 {% if user == i.user %}
-<form>
- <input type="hidden" name="edit" value="EditComment">
-<a href="/editpost/{{ i.key().id() }}" name="edit" value="EditComment">Edit</a>
-<input type="hidden" name="delete" value="DeleteComment">
-<a href="/delete/{{ i.key().id() }}" name="delete" values="DeleteComment">Delete</a>
-</form>
+  <form>
+    <input type="hidden" name="task" value="EditComment">
+    <button name="edit" value="{{ i.key().id() }}">Edit</button>
+  </form>
+  
+  <form>
+    <input type="hidden" name="task" value="DeleteComment">
+    <button name="delete" value="{{ i.key().id() }}">Delete</button>
+  </form>
+  {% endif %}
 {% endif %}
 {% endfor %}
 <section class="NewComment">
