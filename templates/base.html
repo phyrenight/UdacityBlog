@@ -12,7 +12,7 @@
     <header class="container">
       <h1 class="text-center"><a href="/blog" class="title">The Blog</a></h1>
       <div class="row">
-      {% if user == "" %}
+      {% if user == "" or user == None %}
         <a href="/login">login</a>
         <a href="/SignUp">Sign up</a>
       {% else %}

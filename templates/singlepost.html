@@ -1,7 +1,47 @@
 {% extends "base.html" %}
 {% block content %}
-<h2>{{ postid.title }}</h2><div>{{ postid.user}} <div>{{ postid.dateTime.strftime("%b %d, %Y")}}</div>
+<h2>{{ post.title }}</h2><div>{{ post.user}} <div>{{ post.dateTime.strftime("%b %d, %Y")}}</div>
 <hr>
 
-<pre>{{ postid.bpost }}</pre>
+<pre>{{ post.bpost }}</pre>
+{% for i in comments %}
+<h3>{{i.title}}</h3>
+<p>{{ i.comment }}</p>
+<div>{{ i.user }}</div>
+<div>{{i.dateTime.strftime("%b %d %Y")}}
+{% if user == i.user %}
+<form>
+ <input type="hidden" name="edit" value="EditComment">
+<a href="/editpost/{{ i.key().id() }}" name="edit" value="EditComment">Edit</a>
+<input type="hidden" name="delete" value="DeleteComment">
+<a href="/delete/{{ i.key().id() }}" name="delete" values="DeleteComment">Delete</a>
+</form>
+{% endif %}
+{% endfor %}
+<section class="NewComment">
+  <div class="container">
+    <div class="row">
+      <form method="POST">
+        <label>
+          <div>Title:</div>
+          <input type="text" name="Ctitle" value="{{ Ctitle }}">
+        </label>
+        {% if Ctitle == "" and  error == True %}
+        <div class="error">Title is needed</div>
+        {% endif %}
+        <br>
+        <label>
+          <div>Comment</div>
+          <textarea name="comment" value="{{ comment }}">{{ comment }}</textarea>
+        </label>
+        {% if comment == ""  and error == True %}
+        <div class="error">Please enter a comment</div>
+        {% endif %}
+        <br>
+          <button name="postid" value="{{ post.key().id() }}">Submit</button>
+          <a href="/blog">Cancel</a>
+      </form>
+    </div>
+  </div>
+</section>
 {% endblock %}
