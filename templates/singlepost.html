@@ -26,8 +26,17 @@
   <p>{{ i.comment }}</p>
   <div>{{ i.user }}</div>
   <div>{{i.dateTime.strftime("%b %d %Y")}}</div>
-
+  
+  {% if editKey == i.key() and task == "DeleteComment" %}
+     <div>Do you want to <span class="error">delete</span> this comment?</div>
+     <form method="POST">
+       <input type="hidden" name="delete" value="{{ i.key.id }}">
+       <button>Delete</button><a href="/blog/{{post.key().id() }}">Cancel</a>
+     </form>
+  {% endif %}
+{% endif %}
 {% if user == i.user %}
+{% if task == "" or editKey != i.key() %}
   <form>
     <input type="hidden" name="task" value="EditComment">
     <button name="edit" value="{{ i.key().id() }}">Edit</button>

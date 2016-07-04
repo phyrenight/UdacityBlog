@@ -238,12 +238,15 @@ class BlogPost(Handler):
         post = self.get_posts(postid)
         task = self.request.get('task')
         if task == "EditComment":
-            editKey = str(self.request.get('edit'))
+            editKey = self.request.get('edit')
             testKey = db.Key.from_path('Comments', int(editKey))
             self.render_Html(post, user, comments, testKey, task)
         
         elif task == "DeleteComment":
-            print "hi"
+            editKey = self.request.get('delete')
+            testKey = db.Key.from_path('Comments', int(editKey))
+            self.render_Html(post, user, comments, testKey, task)
+
         else:
             self.render_Html(post, user, comments)
     
@@ -261,10 +264,16 @@ class BlogPost(Handler):
             commentEdit = db.get(commentKey)
             commentEdit.comment = Ecomments
             commentEdit.title = Etitle
+            # add test to make sure current user is creator of post before editing
             commentEdit.put()
             return self.redirect('/blog')
         elif task =='DeleteComment':
-            print "bye"
+            editKey = self.request.get('delete')
+            testKey = db.Key.from_path('Comments', int(editKey))
+            deleteComment = db.get(testKey)
+            # add test to make sure current user us the creator of the pst before deleting it
+            deleteComment.delete()
+            self.redirect('/blog')
         else:
             error = False
             user = self.get_username("username")
