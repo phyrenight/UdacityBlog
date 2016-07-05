@@ -8,6 +8,7 @@
 {% for i in comments %}
 {% if editKey == i.key() and task == "EditComment" %}
   <form method="POST">
+  <!-- Edit comment -->
     <input type="hidden" name="task" value="EditComment">
     <label>
       <div>Title:</div>
@@ -26,7 +27,9 @@
   <p>{{ i.comment }}</p>
   <div>{{ i.user }}</div>
   <div>{{i.dateTime.strftime("%b %d %Y")}}</div>
-  
+    {% if message != "" %}
+      <div class="error">{{ message }}</div>
+    {% endif %}
   {% if editKey == i.key() and task == "DeleteComment" %}
      <div>Do you want to <span class="error">delete</span> this comment?</div>
      <form method="POST">

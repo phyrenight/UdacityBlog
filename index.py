@@ -220,9 +220,10 @@ class DeletePost(Handler):
 
 
 class BlogPost(Handler):
-    def render_Html(self, post="", user="", comments="", testKey="", task=""):
+    def render_Html(self, post="", user="", comments="", testKey="", task="",
+                     message=""):
         self.render("singlepost.html", post=post, user=user, comments=comments,
-                     editKey=testKey, task=task)
+                     editKey=testKey, task=task, message=message)
 
     def get_post_comments(self):
         return db.GqlQuery("select * from Comments")
@@ -256,44 +257,59 @@ class BlogPost(Handler):
 
     def post(self, postid):
         if self.get_username('username'):
-            task = self.request.get('task')
-            if task == 'EditComment':
-                editKey = self.request.get('edit')
-                Etitle = self.request.get('Etitle')
-                Ecomments = self.request.get('Ecomment') 
-                commentKey = db.Key.from_path('Comments', int(editKey))
-                commentEdit = db.get(commentKey)
-                commentEdit.comment = Ecomments
-                commentEdit.title = Etitle
-                # add test to make sure current user is creator of post before editing
+            user = self.get_username('username')
+        task = self.request.get('task')
+        key = db.Key.from_path('UsersBlogPost', int(postid))
+        post = db.get(key)
+        comments = db.GqlQuery("select * from Comments")
+        if task == 'EditComment':
+            editKey = self.request.get('edit')
+            Etitle = self.request.get('Etitle')
+            Ecomments = self.request.get('Ecomment') 
+            commentKey = db.Key.from_path('Comments', int(editKey))
+            commentEdit = db.get(commentKey)
+            commentEdit.comment = Ecomments
+            commentEdit.title = Etitle
+            # add test to make sure current user is creator of post before editing
+            if user == commentEdit.user:
                 commentEdit.put()
                 return self.redirect('/blog')
-            elif task =='DeleteComment':
-                editKey = self.request.get('delete')
-                testKey = db.Key.from_path('Comments', int(editKey))
-                deleteComment = db.get(testKey)
-                # add test to make sure current user us the creator of the pst before deleting it
+            else:
+                editKey = self.request.get('edit')
+                message = "You are not the creator of this comment."
+                self.render_Html(post, user, comments, editKey,
+                                 task, message)
+            
+        elif task =='DeleteComment':
+            editKey = self.request.get('delete')
+            testKey = db.Key.from_path('Comments', int(editKey))
+            deleteComment = db.get(testKey)
+            # add test to make sure current user us the creator of the pst before deleting it
+            if user == deleteComment.user:
                 deleteComment.delete()
                 self.redirect('/blog')
             else:
-                error = False
-                user = self.get_username("username")
-                print user
-                title = self.request.get('Ctitle')
-                comment = self.request.get('comment')  # form comment
-                comments = db.GqlQuery("select * from Comments") # comments stored in db
-                post = self.get_posts(postid)
-                if self.test_for_none(comment) or self.test_for_none(title):
-                    error=True
-                    self.render('singlepost.html', Ctitle=title,
-                                comment=comment, user=user, comments=comments,
-                                 error=error, post=post)
-                else:
-                    comment = Comments(user=user, comment=comment, title=title,
-                                        commentId=str(postid))
-                    comment.put()
-                    self.render('singlepost.html', post=post, user=user,
-                                comments=comments)
+                message = "You are not the creator of this comment."
+                self.render_Html(post, user, comments, editKey,
+                                 task, message)
+        else:
+            error = False
+            user = self.get_username("username")
+            title = self.request.get('Ctitle')
+            comment = self.request.get('comment')  # form comment
+            comments = db.GqlQuery("select * from Comments") # comments stored in db
+            post = self.get_posts(postid)
+            if self.test_for_none(comment) or self.test_for_none(title):
+                error=True
+                self.render('singlepost.html', Ctitle=title,
+                             comment=comment, user=user, comments=comments,
+                             error=error, post=post)
+            else:
+                comment = Comments(user=user, comment=comment, title=title,
+                                    commentId=str(postid))
+                comment.put()
+                self.render('singlepost.html', post=post, user=user,
+                             comments=comments)
 
 
 # in the future try to merge all render_Html and get render_Htmlinto 
@@ -356,17 +372,16 @@ class Login(Handler):
         pwd = self.request.get("pwd")
 
         # add try statement to handle error when a user is not in db 
-        uname = db.GqlQuery("select * from User  WHERE userName =:1", name)[0]       
-        if name != uname.userName or not validate_pwd(pwd, uname.passHash):
-            error = True
-            name = ""
-            self.render_Html(name, error)
-        elif True:
-            pass
-        else:
-            self.response.headers.add_header('Set-Cookie',
-                 '{}={}; Path=/'.format("username", name))
-            self.redirect('/blog')    
+        if db.GqlQuery("select * from User where userName =:1", name):
+            uname = db.GqlQuery("select * from User  WHERE userName =:1", name)[0]       
+            if name != uname.userName or not validate_pwd(pwd, uname.passHash):
+                error = True
+                name = ""
+                self.render_Html(name, error)
+            else:
+                self.response.headers.add_header('Set-Cookie',
+                    '{}={}; Path=/'.format("username", name))
+                self.redirect('/blog')    
 
 class Logout(Handler):
     def get(self):
