@@ -15,7 +15,7 @@
     </label>
     <label>
       <div>Comment:</div>
-      <textarea name="Ecomment" value="{{ i.comment }}">{{ i.comment }}</textarea>
+      <textarea name="Ecomment" value="{{ i.comment }}" required>{{ i.comment }}</textarea>
     </label>
     <button name="edit" value="{{ editKey }}">Submit</button>
     <a href="/blog/{{ post.key().id() }}">Cancel</a>

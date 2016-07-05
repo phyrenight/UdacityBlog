@@ -255,40 +255,45 @@ class BlogPost(Handler):
             return True
 
     def post(self, postid):
-        task = self.request.get('task')
-        if task == 'EditComment':
-            editKey = self.request.get('edit')
-            Etitle = self.request.get('Etitle')
-            Ecomments = self.request.get('Ecomment') 
-            commentKey = db.Key.from_path('Comments', int(editKey))
-            commentEdit = db.get(commentKey)
-            commentEdit.comment = Ecomments
-            commentEdit.title = Etitle
-            # add test to make sure current user is creator of post before editing
-            commentEdit.put()
-            return self.redirect('/blog')
-        elif task =='DeleteComment':
-            editKey = self.request.get('delete')
-            testKey = db.Key.from_path('Comments', int(editKey))
-            deleteComment = db.get(testKey)
-            # add test to make sure current user us the creator of the pst before deleting it
-            deleteComment.delete()
-            self.redirect('/blog')
-        else:
-            error = False
-            user = self.get_username("username")
-            title = self.request.get('Ctitle')
-            comment = self.request.get('comment')  # form comment
-            comments = db.GqlQuery("select * from Comments") # comments stored in db
-            post = self.get_posts(postid)
-            if self.test_for_none(comment) or self.test_for_none(title):
-                error=True
-                self.render('singlepost.html', Ctitle=title, comment=comment,
-                            user=user, comments=comments, error=error,
-                            post=post)
+        if self.get_username('username'):
+            task = self.request.get('task')
+            if task == 'EditComment':
+                editKey = self.request.get('edit')
+                Etitle = self.request.get('Etitle')
+                Ecomments = self.request.get('Ecomment') 
+                commentKey = db.Key.from_path('Comments', int(editKey))
+                commentEdit = db.get(commentKey)
+                commentEdit.comment = Ecomments
+                commentEdit.title = Etitle
+                # add test to make sure current user is creator of post before editing
+                commentEdit.put()
+                return self.redirect('/blog')
+            elif task =='DeleteComment':
+                editKey = self.request.get('delete')
+                testKey = db.Key.from_path('Comments', int(editKey))
+                deleteComment = db.get(testKey)
+                # add test to make sure current user us the creator of the pst before deleting it
+                deleteComment.delete()
+                self.redirect('/blog')
             else:
-                self.render('singlepost.html', post=post, user=user,
-                            comments=comments)
+                error = False
+                user = self.get_username("username")
+                print user
+                title = self.request.get('Ctitle')
+                comment = self.request.get('comment')  # form comment
+                comments = db.GqlQuery("select * from Comments") # comments stored in db
+                post = self.get_posts(postid)
+                if self.test_for_none(comment) or self.test_for_none(title):
+                    error=True
+                    self.render('singlepost.html', Ctitle=title,
+                                comment=comment, user=user, comments=comments,
+                                 error=error, post=post)
+                else:
+                    comment = Comments(user=user, comment=comment, title=title,
+                                        commentId=str(postid))
+                    comment.put()
+                    self.render('singlepost.html', post=post, user=user,
+                                comments=comments)
 
 
 # in the future try to merge all render_Html and get render_Htmlinto 
