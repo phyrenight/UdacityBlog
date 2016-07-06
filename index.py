@@ -300,11 +300,14 @@ class BlogPost(Handler):
             comments = db.GqlQuery("select * from Comments") # comments stored in db
             post = self.get_posts(postid)
             if self.test_for_none(comment) or self.test_for_none(title):
+                print "hello"
                 error=True
-                self.render('singlepost.html', Ctitle=title,
-                             comment=comment, user=user, comments=comments,
-                             error=error, post=post)
+                #self.render('singlepost.html', Ctitle=title,
+                          #   comment=comment, user=user, comments=comments,
+                          #   error=error, post=post)
+                self.redirect('/blog/{}'.format(postid))
             else:
+                print "bye"
                 comment = Comments(user=user, comment=comment, title=title,
                                     commentId=str(postid))
                 comment.put()

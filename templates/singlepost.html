@@ -52,6 +52,7 @@
   {% endif %}
 {% endif %}
 {% endfor %}
+{% if message == "" %}
 <section class="NewComment">
   <div class="container">
     <div class="row">
@@ -72,10 +73,12 @@
         <div class="error">Please enter a comment</div>
         {% endif %}
         <br>
+        <input type="hidden" name="task" value="NewComment">
           <button name="postid" value="{{ post.key().id() }}">Submit</button>
           <a href="/blog">Cancel</a>
       </form>
     </div>
   </div>
 </section>
+{% endif %}
 {% endblock %}
