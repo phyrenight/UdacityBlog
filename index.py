@@ -375,7 +375,7 @@ class Login(Handler):
         pwd = self.request.get("pwd")
 
         # add try statement to handle error when a user is not in db 
-        if db.GqlQuery("select * from User where userName =:1", name):
+        try:
             uname = db.GqlQuery("select * from User  WHERE userName =:1", name)[0]       
             if name != uname.userName or not validate_pwd(pwd, uname.passHash):
                 error = True
@@ -384,7 +384,10 @@ class Login(Handler):
             else:
                 self.response.headers.add_header('Set-Cookie',
                     '{}={}; Path=/'.format("username", name))
-                self.redirect('/blog')    
+                self.redirect('/blog')
+        except:
+            message = "User not found!"
+            self.render("login.html", message=message, user="")
 
 class Logout(Handler):
     def get(self):
