@@ -1,10 +1,23 @@
 {% extends "base.html" %}
 {% block content %}
-<h2>{{ post.title }}</h2><div>{{ post.user}} <div>{{ post.dateTime.strftime("%b %d, %Y")}}</div>
-<hr>
-<pre>{{ post.bpost }}</pre>
-
-<h3>Comments</h3>
+<section class="containter">
+  <div class="row">
+    <h2 class="col-xs-offset-1 col-xs-3 col-sm-offset-1 col-sm-3 col-md-offset-1 col-md-3 col-lg-offset-1 col-lg-3">{{ post.title }}</h2>
+    </div>
+ 
+    <div class="row">
+    <pre class="col-xs-offset-1 col-xs-10 col-sm-offset-1 col-sm-10 col-md-offset-1 col-md-10 col-lg-offset-1 col-lg-10">{{ post.bpost }}</pre>
+  </div>
+  <div class="row">
+    <div class="col-xs-offset-10 col-xs-1 col-sm-offset-10 col-sm-1 col-md-offset-10 col-md-1 col-lg-offset-10 col-lg-1">{{ post.user}}</div> 
+    </div>
+    <div class="row">
+    <div class="col-xs-offset-10 col-xs-1 col-sm-offset-10 col-sm-1 col-md-offset-10 col-md-1 col-lg-offset-10 col-lg-1">{{ post.dateTime.strftime("%b %d, %Y")}}</div>
+  </div>
+</section>
+<div class="container">
+<h3 class="text-center">Comments</h3>
+</div>
 {% for i in comments %}
 {% if editKey == i.key() and task == "EditComment" %}
   <form method="POST">
@@ -23,59 +36,76 @@
   </form>
 
 {% else %}
-  <h3>{{i.title}}</h3>
-  <p>{{ i.comment }}</p>
-  <div>{{ i.user }}</div>
-  <div>{{i.dateTime.strftime("%b %d %Y")}}</div>
+<section class="container">
+  <div class="row">
+    <h3 class="col-xs-3 col-sm-3 col-md-3 col-lg-3">{{i.title}}</h3>
+  </div>
+  <div class="row">
+    <p class="col-xs-10 col-sm-10 col-md-10 col-lg-10">{{ i.comment }}</p>
+  </div>
+  <div class="row">
+    <div class="col-xs-offset-10 col-xs-1 col-sm-offset-10 col-sm-1 col-md-offset-10 col-md-1 col-lg-offset-10 col-lg-1">{{ i.user }}</div>
+  </div>
+  <div class="row">
+    <div class="col-xs-offset-10 col-xs-2 col-sm-offset-10 col-sm-2 col-md-offset-10 col-md-2 col-lg-offset-10 col-lg-2">{{i.dateTime.strftime("%b %d %Y")}}</div>
+  </div>
     {% if message != "" %}
       <div class="error">{{ message }}</div>
     {% endif %}
+    </div>
+  </section>
   {% if editKey == i.key() and task == "DeleteComment" %}
      <div>Do you want to <span class="error">delete</span> this comment?</div>
-     <form method="POST">
+     <div class="container"
+     <form method="POST" class="row">
        <input type="hidden" name="delete" value="{{ i.key.id }}">
-       <button>Delete</button><a href="/blog/{{post.key().id() }}">Cancel</a>
+       <button class="col-xs-1 col-sm-1 col-md-1 col-lg-1">Delete</button>
+       <a href="/blog/{{post.key().id() }}" class="col-xs-1 col-sm-1 col-md-1 col-lg-1">Cancel</a>
      </form>
   {% endif %}
 {% endif %}
 {% if user == i.user %}
 {% if task == "" or editKey != i.key() %}
+<section class="container">
+ <div class="row">
   <form>
     <input type="hidden" name="task" value="EditComment">
-    <button name="edit" value="{{ i.key().id() }}">Edit</button>
+    <button name="edit" value="{{ i.key().id() }}" class="col-xs-offset-10 col-xs-1 col-sm-offset-10 col-sm-1 col-md-offset-10 col-md-1 col-lg-offset-10 col-lg-1">Edit</button>
   </form>
   
   <form>
     <input type="hidden" name="task" value="DeleteComment">
-    <button name="delete" value="{{ i.key().id() }}">Delete</button>
+    <button name="delete" value="{{ i.key().id() }}" class="col-xs-1 col-sm-1 col-md-1 col-lg-1">Delete</button>
   </form>
+ </div>
+</section>
   {% endif %}
 {% endif %}
 {% endfor %}
+
 {% if message == "" %}
 <section class="NewComment">
   <div class="container">
-    <div class="row">
       <form method="POST">
-        <label>
-          <div>Title:</div>
-          <input type="text" name="Ctitle" value="{{ Ctitle }}">
-        </label>
+       <div class="row">
+        <label class="col-xs-offset-4 col-xs-1 col-sm-offset-4 col-sm-1 col-md-offset-4 col-md-1 col-lg-offset-4 col-lg-1">Title:</label>
+          <input type="text" name="Ctitle" value="{{ Ctitle }}" class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
         {% if Ctitle == "" and  error == True %}
-        <div class="error">Title is needed</div>
+        <div class="error col-xs-2 col-sm-2 col-md-2 col-lg-2">Title is needed</div>
         {% endif %}
-        <br>
-        <label>
-          <div>Comment</div>
-          <textarea name="comment" value="{{ comment }}">{{ comment }}</textarea>
-        </label>
+        </div>
+        <div class="row">
+        <label class="col-xs-offset-4 col-xs-1 col-sm-offset-4 col-sm-1 col-md-offset-4 col-md-1 col-lg-offset-4 col-lg-1">Comment</label>
+          <textarea name="comment" value="{{ comment }}" class="col-xs-2 col-sm-2 col-md-2 col-lg-2">{{ comment }}</textarea>
         {% if comment == ""  and error == True %}
-        <div class="error">Please enter a comment</div>
+        <div class="error col-xs-2 col-sm-2 col-md-2 col-lg-2">Please enter a comment</div>
         {% endif %}
-        <br>
-        <input type="hidden" name="task" value="NewComment">
-          <button name="postid" value="{{ post.key().id() }}">Submit</button>
-          <a href="/blog">Cancel</a>
+        </div>
+        <div class="row">
+          <input type="hidden" name="task" value="NewComment">
+          <button name="postid" value="{{ post.key().id() }}" class="col-xs-offset-5 col-xs-1 col-sm-offset-5 col-sm-1 col-md-offset-5 col-md-1 col-lg-offset-5 col-lg-1">Submit</button>
+          <a href="/blog" class="col-xs-1 col-sm-1 col-md-1 col-lg-1">Cancel</a>
+        </div>
       </form>
     </div>
   </div>
