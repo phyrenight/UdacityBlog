@@ -15,18 +15,29 @@ jinja_env.globals['url_for'] = webapp2.uri_for
 
 
 def get_salt():
+    """
+        generates random letters for hashes
+    """
     return "".join(random.choice(string.ascii_uppercase +
                    string.ascii_lowercase) for i in range(5))
 
 
 def make_hash(pwd, salt=None):
+    """
+        generates a random hash 
+    """
     if not salt:
         salt = get_salt()
     passHash = hashlib.sha256(salt + pwd).hexdigest()
     return "{}|{}".format(passHash, salt)
 
 
-def validate_pwd(pwd, passHash):  # change to validate_hash
+def validate_pwd(pwd, passHash):  
+    """
+        validates hash
+        args: pwd user entered
+        returns: true or false
+    """
     line = passHash.find('|')
     saltWord = passHash[line+1:]
     if passHash == make_hash(pwd, saltWord):
@@ -74,15 +85,29 @@ class Handler(webapp2.RequestHandler):
         user.cookie_salt = salt
 
     def get_posts(self, table, postid):
+        """
+            gets data from a table using the rows id
+            args: table - the tables name in the database
+                  postid - the id of the 
+            returns: the retrieved table row
+        """
         keys = db.Key.from_path(table, int(postid))
         post = db.get(keys)
         return post
 
     def get_query(self, table):
+        """
+            gets table
+            args: table -name of the table in the database
+            returns: table
+        """
         return db.GqlQuery("select * from {}".format(table))
 
 
 class MainPage(Handler):
+    """
+        blog post form
+    """
     def render_Html(self, title="", rant="", error="", user=""):
         self.render("blogform.html", title=title, rant=rant, error=error,
                     user=user)
@@ -184,6 +209,9 @@ class EditPost(Handler):
 
 
 class DeletePost(Handler):
+    """
+        delete a blog post
+    """
     def render_Html(self, user, title="", error=False):
         self.render("delete.html", title=title, user=user, error=error)
 
@@ -294,10 +322,10 @@ class BlogPost(Handler):
                             comments=comments)
 
 
-# in the future try to merge all render_Html and get render_Htmlinto
-# a single callable function(DRY)
-
 class SignUp(Handler):
+    """
+        register with the site
+    """
     def render_Html(self, name="", email="", error=False, user=""):
         self.render("register.html", name=name, email=email, error=error,
                     user=user)
@@ -338,6 +366,9 @@ class SignUp(Handler):
 
 
 class Welcome(Handler):
+    """
+        welcome page
+    """
     def get(self):
         user = self.request.get('username')
         if user is not None:
@@ -347,6 +378,9 @@ class Welcome(Handler):
 
 
 class Login(Handler):
+    """
+        user login page
+    """
     def render_Html(self, name="", error=False, user=""):
         self.render("login.html", name=name, error=error, user=user)
 
@@ -376,6 +410,9 @@ class Login(Handler):
 
 
 class Logout(Handler):
+    """
+        user logout page
+    """
     def get(self):
         self.response.headers.add_header('Set-Cookie',
                                          "username=; Path=/")
