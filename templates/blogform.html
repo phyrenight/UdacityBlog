@@ -4,21 +4,21 @@
     <section class="container">
       <form method='POST'>
       <div class="row">
-        <label class="col-xs-offset-4 col-xs-1 col-sm-offset-4 col-sm-1 col-md-offset-4 col-md-1 col-lg-offset-4 col-lg-1">Title:</label>
-          <input type="text" name="title" value="{{title}}" class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+        <label class="col-xs-offset-1 col-xs-2 col-sm-offset-4 col-sm-1 col-md-offset-4 col-md-1 col-lg-offset-4 col-lg-1">Title:</label>
+          <input type="text" name="title" value="{{title}}" class="col-xs-4 col-sm-3 col-md-3 col-lg-2">
           {% if error == True and title == "" %}
             <div class="error col-xs-2 col-sm-2 col-md-2 col-lg-2">You need to enter a title</div>
           {% endif %}
         </div>
         <div class="row">
-        <label class="col-xs-offset-4 col-xs-1 col-sm-offset-4 col-sm-1 col-md-offset-4 col-md-1 col-lg-offset-4 col-lg-1">Blog:</label>
-          <textarea name="rant" value="{{rant}}" class="col-xs-2 col-sm-2 col-md-2 col-lg-2">{{rant}}</textarea> 
+        <label class="col-xs-offset-1 col-xs-2 col-sm-offset-4 col-sm-1 col-md-offset-4 col-md-1 col-lg-offset-4 col-lg-1">Blog:</label>
+          <textarea name="rant" value="{{rant}}" class="col-xs-4 col-sm-3 col-md-3 col-lg-2">{{rant}}</textarea> 
         {% if error == True and rant == "" %}
           <div class="error col-xs-2 col-sm-2 col-md-2 col-lg-2">You need to enter a post.</div>
         {% endif %}
         </div>
         <div class="row">
-        <button class="col-xs-offset-5 col-xs-1 col-sm-offset-5 col-sm-1 col-md-offset-5 col-md-1 col-lg-offset-5 col-lg-1">Commit</button>
+        <button class="col-xs-offset-3 col-xs-3 col-sm-offset-5 col-sm-2 col-md-offset-5 col-md-1 col-lg-offset-5 col-lg-1">Commit</button>
         <a href="/blog" class="col-xs-2 col-sm-2 col-md-2 col-lg-2">Cancel</a>
       </form>
     </section>

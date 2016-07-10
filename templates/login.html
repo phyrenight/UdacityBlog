@@ -8,21 +8,21 @@
 {% endif %}
 <form method="post" class="container">
 <div class="row">
-  <label class="col-xs-offset-4 col-xs-1 col-sm-offset-4 col-sm-1 col-md-offset-4 col-md-1 col-lg-offset-4 col-lg-1">Name:</label>
-   <input type="text" name="name" value="{{name}}" class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+  <label class="col-xs-offset-1 col-xs-4 col-sm-offset-4 col-sm-2 col-md-offset-4 col-md-1 col-lg-offset-4 col-lg-1">Name:</label>
+   <input type="text" name="name" value="{{name}}" class="col-xs-4 col-sm-3 col-md-2 col-lg-2">
   {% if error == True and name == "" %}
     <div class="error col-xs-2 col-sm-2 col-md-2 col-lg-2"> Incorrect username.</div>
   {% endif %}</div>
   <br>
   <div class="row">
-  <label class="col-xs-offset-4 col-xs-1 col-sm-offset-4 col-sm-1 col-md-offset-4 col-md-1 col-lg-offset-4 col-lg-1">Password:</label>
-    <input type="password" name="pwd" class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+  <label class="col-xs-offset-1 col-xs-4 col-sm-offset-4 col-sm-2 col-md-offset-4 col-md-1 col-lg-offset-4 col-lg-1">Password:</label>
+    <input type="password" name="pwd" class="col-xs-4 col-sm-3 col-md-2 col-lg-2">
   {% if error == True and not name %}
     <div class="error col-xs-2 col-sm-2 col-md-2 col-lg-2">Incorrect password.</div>
   {% endif %}</div>
   <br>
   <div class="row">
-  <button class="col-xs-offset-5 col-xs-1 col-sm-offset-5 col-sm-1 col-md-offset-5 col-md-1 col-lg-offset-5 col-lg-1">Submit</button>
+  <button class="col-xs-offset-5 col-xs-3 col-sm-offset-6 col-sm-2 col-md-offset-5 col-md-1 col-lg-offset-5 col-lg-1">Submit</button>
   <a href="/blog" class="col-xs-1 col-sm-1 col-md-1 col-lg-1">Cancel</a>
   </div>
 </form>

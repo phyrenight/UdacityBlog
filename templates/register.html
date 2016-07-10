@@ -2,29 +2,29 @@
 {% block content %}
   <form method="POST" class="container">
   <div class="row">
-    <label class="col-xs-offset-4 col-xs-2 col-sm-offset-4 col-sm-2 col-md-offset-4 col-md-2 col-lg-offset-4 col-lg-2">Name:</label>
-        <input type="text" name="name" value="{{name}}" class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+    <label class="col-xs-offset-2 col-xs-4 col-sm-offset-4 col-sm-2 col-md-offset-4 col-md-2 col-lg-offset-4 col-lg-2">Name:</label>
+        <input type="text" name="name" value="{{name}}" class="col-xs-4 col-sm-2 col-md-2 col-lg-2">
     {% if error == True and name == "" %}
       <div class="error col-xs-2 col-sm-2 col-md-2 col-lg-2">That username is not avialable.</div>
     {% endif %}
     </div>
     <div class="row">
-    <label class="col-xs-offset-4 col-xs-2 col-sm-offset-4 col-sm-2 col-md-offset-4 col-md-2 col-lg-offset-4 col-lg-2">Password:</label>
-        <input type="password" name="pwd" class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+    <label class="col-xs-offset-2 col-xs-4 col-sm-offset-4 col-sm-2 col-md-offset-4 col-md-2 col-lg-offset-4 col-lg-2">Password:</label>
+        <input type="password" name="pwd" class="col-xs-4 col-sm-2 col-md-2 col-lg-2">
     </div>
     <div class="row">
-    <label class="col-xs-offset-4 col-xs-2 col-sm-offset-4 col-sm-2 col-md-offset-4 col-md-2 col-lg-offset-4 col-lg-2">Verify password:</label>
-        <input type="password" name="verifypwd" class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+    <label class="col-xs-offset-2 col-xs-4 col-sm-offset-4 col-sm-2 col-md-offset-4 col-md-2 col-lg-offset-4 col-lg-2">Verify password:</label>
+        <input type="password" name="verifypwd" class="col-xs-4 col-sm-2 col-md-2 col-lg-2">
     {% if error == True %}
         <div class="error" class="col-xs-2 col-sm-2 col-md-2 col-lg-2">Passwords must match. </div>
     {% endif %}
     </div>
     <div class="row">
-    <label class="col-xs-offset-4 col-xs-2 col-sm-offset-4 col-sm-2 col-md-offset-4 col-md-2 col-lg-offset-4 col-lg-2">Email:</label>
-        <input type="email" name="email" value="{{email}}" class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+    <label class="col-xs-offset-2 col-xs-4 col-sm-offset-4 col-sm-2 col-md-offset-4 col-md-2 col-lg-offset-4 col-lg-2">Email:</label>
+        <input type="email" name="email" value="{{email}}" class="col-xs-4 col-sm-2 col-md-2 col-lg-2">
     </div>
     <div class="row">
-    <button class="col-xs-offset-5 col-xs-1 col-sm-offset-5 col-sm-1 col-md-offset-5 col-md-1 col-lg-offset-5 col-lg-1"> log in</button>
+    <button class="col-xs-offset-5 col-xs-2 col-sm-offset-5 col-sm-2 col-md-offset-6 col-md-1 col-lg-offset-6 col-lg-1"> log in</button>
     <a href="/blog" class="col-xs-2 col-sm-2 col-md-2 col-lg-2">cancel</a>
     </div>
   </form>

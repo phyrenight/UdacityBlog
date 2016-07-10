@@ -22,22 +22,29 @@
 </div>
 {% for i in comments %}
 {% if editKey == i.key() and task == "EditComment" %}
-  <form method="POST">
+
+  <form method="POST" class="container">
+  <div class="row">
+  <h4 class="text-center">Edit Comment</h4>
+  </div>
   <!-- Edit comment -->
     <input type="hidden" name="task" value="EditComment">
-    <label>
-      <div>Title:</div>
-      <input type="text" name="Etitle" value="{{ i.title }}">
-    </label>
-    <label>
-      <div>Comment:</div>
-      <textarea name="Ecomment" value="{{ i.comment }}" required>{{ i.comment }}</textarea>
-    </label>
-    <button name="edit" value="{{ editKey }}">Submit</button>
-    <a href="/blog/{{ post.key().id() }}">Cancel</a>
+    <div class="row">
+    <label class="col-xs-4 col-sm-2 col-md-1 col-lg-offset-4 col-lg-1">Title:</label>
+    <input type="text" name="Etitle" value="{{ i.title }}" class="col-xs-4 col-sm-2 col-md-2 col-lg-2">
+    </div>
+    <div class="row">
+    <label class="col-xs-4 col-sm-2 col-md-1 col-lg-offset-4 col-lg-1">Comment:</label>
+    <textarea name="Ecomment" value="{{ i.comment }}" class="col-xs-6 col-sm-4 col-md-3 col-lg-3">{{ i.comment }}</textarea>
+    </div>
+    <div class="row">
+    <button name="edit" value="{{ editKey }}" class="col-xs-offset-4 col-xs-3 col-sm-offset-2 col-sm-2 col-md-offset-1 col-md-1 col-lg-offset-6 col-lg-1">Submit</button>
+    <a href="/blog/{{ post.key().id() }}" class="col-xs-1 col-sm-1 col-md-1 col-lg-1">Cancel</a>
+    </div>
   </form>
-
+<hr>
 {% else %}
+<!-- comment -->
 <section class="container">
   <div class="row">
     <h3 class="col-xs-3 col-sm-3 col-md-3 col-lg-3">{{i.title}}</h3>
@@ -54,7 +61,6 @@
     {% if message != "" %}
       <div class="error">{{ message }}</div>
     {% endif %}
-    </div>
   </section>
   {% if editKey == i.key() and task == "DeleteComment" %}
   <div class="container">
@@ -63,7 +69,7 @@
      </div>
      <form method="POST" class="row">
        <input type="hidden" name="delete" value="{{ i.key.id }}">
-       <button class="col-xs-offset-5 col-xs-1 col-sm-offset-5 col-sm-1 col-md-offset-5 col-md-1 col-lg-offset-5 col-lg-1">Delete</button>
+       <button class="col-xs-offset-5 col-xs-2 col-sm-offset-5 col-sm-2 col-md-offset-5 col-md-2 col-lg-offset-5 col-lg-1">Delete</button>
        <a href="/blog/{{post.key().id() }}" class="col-xs-1 col-sm-1 col-md-1 col-lg-1">Cancel</a>
      </form>
    </div>
@@ -83,7 +89,7 @@
   
   <form>
     <input type="hidden" name="task" value="DeleteComment">
-    <button name="delete" value="{{ i.key().id() }}" class="col-xs-1 col-sm-1 col-md-1 col-lg-1">Delete</button>
+    <button name="delete" value="{{ i.key().id() }}" class="col-xs-2 col-sm-2 col-md-2 col-lg-1">Delete</button>
   </form>
  </div>
 </section>
@@ -94,24 +100,27 @@
 {% if message == "" %}
 <section class="NewComment">
   <div class="container">
+    <div class="row">
+     <h4 class="text-center">New Comment</h4>
+    </div>
       <form method="POST">
        <div class="row">
-        <label class="col-xs-offset-4 col-xs-1 col-sm-offset-4 col-sm-1 col-md-offset-4 col-md-1 col-lg-offset-4 col-lg-1">Title:</label>
-          <input type="text" name="Ctitle" value="{{ Ctitle }}" class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+        <label class=" col-xs-4 col-sm-2 col-md-1 col-lg-offset-4 col-lg-1">Title:</label>
+          <input type="text" name="Ctitle" value="{{ Ctitle }}" class="col-xs-3 col-sm-2 col-md-2 col-lg-2">
         {% if Ctitle == "" and  error == True %}
         <div class="error col-xs-2 col-sm-2 col-md-2 col-lg-2">Title is needed</div>
         {% endif %}
         </div>
         <div class="row">
-        <label class="col-xs-offset-4 col-xs-1 col-sm-offset-4 col-sm-1 col-md-offset-4 col-md-1 col-lg-offset-4 col-lg-1">Comment:</label>
-          <textarea name="comment" value="{{ comment }}" class="col-xs-2 col-sm-2 col-md-2 col-lg-2">{{ comment }}</textarea>
+        <label class="col-xs-4 col-sm-2 col-md-1 col-lg-offset-4 col-lg-1">Comment:</label>
+          <textarea name="comment" value="{{ comment }}" class="col-xs-6 col-sm-4 col-md-3 col-lg-3">{{ comment }}</textarea>
         {% if comment == ""  and error == True %}
         <div class="error col-xs-2 col-sm-2 col-md-2 col-lg-2">Please enter a comment</div>
         {% endif %}
         </div>
         <div class="row">
           <input type="hidden" name="task" value="NewComment">
-          <button name="postid" value="{{ post.key().id() }}" class="col-xs-offset-5 col-xs-1 col-sm-offset-5 col-sm-1 col-md-offset-5 col-md-1 col-lg-offset-5 col-lg-1">Submit</button>
+          <button name="postid" value="{{ post.key().id() }}" class="col-xs-offset-4 col-xs-4 col-sm-offset-5 col-sm-2 col-md-offset-1 col-md-1 col-lg-offset-6 col-lg-1">Submit</button>
           <a href="/blog" class="col-xs-1 col-sm-1 col-md-1 col-lg-1">Cancel</a>
         </div>
       </form>
