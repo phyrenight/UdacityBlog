@@ -13,8 +13,11 @@ download or clone the repository
 if running on linux you may need to add app engine to your path.
 example export PATH=$PATH:/home/YOURNAME/programming/"app engine"/google_appengine/
 
-then navigate into the blog folder from the command line.
+navigate into the blog folder from the command line.
 then type `dev_appserver.py ./`
+
+launch a browser
+type `localhost:8080/Blog` into the address bar
 
 ## To use 
 You must first create an account.
