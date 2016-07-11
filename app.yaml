@@ -1,4 +1,4 @@
-
+application: practice1-1247
 version: 1
 runtime: python27
 threadsafe: true 
@@ -9,6 +9,38 @@ handlers:
   script: index.app
   secure: always
 
+- url: /blogform.*
+  script: IGNORE
+  secure: always
+
+- url: /blog.*
+  script: IGNORE
+
+- url: /blog/([0-9]+).*
+  script: IGNORE
+
+- url: /SignUp.*
+  script: IGNORE
+
+- url: /login.*
+  script: IGNORE
+
+- url: /welcome.*
+  script: IGNORE
+
+- url: /logout.*
+  script: IGNORE
+
+- url: /editpost/([0-9]+).*
+  script: IGNORE
+
+- url: /delete/([0-9]+).*
+  script: IGNORE
+
+
 libraries:
 - name: jinja2
   version: latest
+
+- name: webapp2
+  version: "2.5.2"
