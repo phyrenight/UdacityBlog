@@ -21,9 +21,11 @@ handlers:
 
 - url: /SignUp.*
   script: IGNORE
+  secure: always
 
 - url: /login.*
   script: IGNORE
+  secure: always
 
 - url: /welcome.*
   script: IGNORE
@@ -33,9 +35,11 @@ handlers:
 
 - url: /editpost/([0-9]+).*
   script: IGNORE
+  secure: always
 
 - url: /delete/([0-9]+).*
   script: IGNORE
+  secure: always
 
 
 libraries:
