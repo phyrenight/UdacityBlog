@@ -165,7 +165,6 @@ class BlogPage(Handler):
             title = self.request.get("Ctitle")
             comment = self.request.get("comment")
             postid = self.request.get("postid")
-            print postid
             userComment = Comments(user=user, comment=comment, title=title,
                                    commentId=postid)
             userComment.put()
@@ -202,10 +201,13 @@ class EditPost(Handler):
             self.render_Html(title=title, rant=rant, error=error, user=user)
         else:
             post = self.get_posts('UsersBlogPost', postids)
-            post.title = title
-            post.bpost = rant
-            post.put()
-            self.redirect("/blog")
+            if user == post.user:
+                post.title = title
+                post.bpost = rant
+                post.put()
+                self.redirect("/")
+            else:
+                self.redirect("/login")
 
 
 class DeletePost(Handler):
@@ -233,8 +235,11 @@ class DeletePost(Handler):
         if self.get_username('username'):
             user = self.get_username('username')
             post = self.get_posts('UsersBlogPost', postid)
-            post.delete()
-            self.redirect('/blog')
+            if user == post.user: 
+                post.delete()
+                self.redirect("/")
+            else:
+                self.redirect("/login")
         else:
             self.redirect("/login")
 
@@ -286,7 +291,7 @@ class BlogPost(Handler):
             # test whether current user is the comment's creator
             if user == commentEdit.user:
                 commentEdit.put()
-                return self.redirect('/blog')
+                return self.redirect('/')
             else:
                 editKey = self.request.get('edit')
                 message = "You are not the creator of this comment."
@@ -299,7 +304,7 @@ class BlogPost(Handler):
             # test whether current user is the comment's creator
             if user == deleteComment.user:
                 deleteComment.delete()
-                self.redirect('/blog')
+                self.redirect('/')
             else:
                 message = "You are not the creator of this comment."
                 self.render_Html(post, user, comments, editKey,
@@ -322,6 +327,25 @@ class BlogPost(Handler):
                             comments=comments)
 
 
+class Likes(Handler):
+    def get(self):
+        pass
+
+    def post(self):
+        postid = self.request.get('like')
+        if self.get_username('username'):
+            username = self.get_username('username')
+            like = self.get_posts('UsersBlogPost', int(postid))    
+            if username in like.likes:
+                self.redirect("/")
+            else:
+                if username != like.user:
+                    like.likes.append(username)
+                    like.put()
+                    self.redirect('/')
+        else:
+            self.redirect('/login')
+
 class SignUp(Handler):
     """
         register with the site
@@ -332,7 +356,7 @@ class SignUp(Handler):
 
     def get(self):
         if self.get_username('username'):
-            self.redirect("/blog")
+            self.redirect("/")
         else:
             self.render_Html()
 
@@ -403,7 +427,7 @@ class Login(Handler):
                 self.response.headers.add_header('Set-Cookie',
                                                  '{}={}; Path=/'.format
                                                  ("username", name))
-                self.redirect('/blog')
+                self.redirect('/')
         except:
             message = "User not found!"
             self.render("login.html", message=message, user="")
@@ -416,15 +440,16 @@ class Logout(Handler):
     def get(self):
         self.response.headers.add_header('Set-Cookie',
                                          "username=; Path=/")
-        self.redirect('/blog')
+        self.redirect('/')
 
 app = webapp2.WSGIApplication([('/blogform', MainPage),
-                              ('/blog', BlogPage),  # main page
+                              ('/', BlogPage),  # main page
                               ('/blog/([0-9]+)', BlogPost),  # single post page
                               ('/SignUp', SignUp),
                               ('/login', Login),
                               ('/welcome', Welcome),
                               ('/logout', Logout),
                               ('/editpost/([0-9]+)', EditPost),
-                              ('/delete/([0-9]+)', DeletePost)],
+                              ('/delete/([0-9]+)', DeletePost),
+                              ('/likes', Likes)],
                               debug=True)

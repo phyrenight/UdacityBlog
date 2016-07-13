@@ -17,7 +17,7 @@
       </section>
       {% if user != "" and user != None%}
         {% if user != i.user %}
-      <form class="row" method="POST">
+      <form class="row" method="POST" action="/likes">
         <button class="" name="like" value="{{ i.key().id() }}">Like</button>
       </form>
       {% else %}
