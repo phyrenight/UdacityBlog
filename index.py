@@ -144,7 +144,7 @@ class BlogPage(Handler):
     def get(self):
         posts = self.get_query("UsersBlogPost")
         comments = self.get_query("Comments")
-        user = self.get_username('username')  # Test currently working on
+        user = self.get_username("username")  # Test currently working on
         self.render('blogpost.html', posts=posts, comments=comments, user=user)
 
     def post(self):
@@ -332,12 +332,16 @@ class Likes(Handler):
         pass
 
     def post(self):
-        postid = self.request.get('like')
+        posts = self.get_query("UsersBlogPost")
+        comments = self.get_query("Comments")
+        user = self.get_username("username")
+        postid = self.request.get("like")
         if self.get_username('username'):
             username = self.get_username('username')
             like = self.get_posts('UsersBlogPost', int(postid))    
             if username in like.likes:
-                self.redirect("/")
+                numLikes = len(like.likes)
+                self.render('blogpost.html', posts=posts, comments=comments, user=user)
             else:
                 if username != like.user:
                     like.likes.append(username)
