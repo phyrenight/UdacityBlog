@@ -22,3 +22,5 @@ type `localhost:8080/Blog` into the address bar
 ## To use 
 You must first create an account.
 Once logged in you can make a post/comment or post
+
+##To visit my Blog click [here](https://practice1-1247.appspot.com/blog)
