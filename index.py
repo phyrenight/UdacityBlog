@@ -1,4 +1,5 @@
 import os
+import sys
 import random
 import string
 import jinja2
@@ -6,7 +7,11 @@ import webapp2
 import hashlib
 
 from google.appengine.ext import db
-from models import UsersBlogPost, User, Comments
+
+sys.path.insert(0, 'Models')
+from posts import UsersBlogPost
+from comments import Comments
+from models import User
 
 template_dir = os.path.join(os.path.dirname(__file__), 'templates')
 jinja_env = jinja2.Environment(loader=jinja2.FileSystemLoader(template_dir),
@@ -315,22 +320,27 @@ class BlogPost(Handler):
 
             elif task == 'DeleteComment':
                 editKey = self.request.get('delete')
-                deleteComment = self.get_posts('Comments', editKey)
-                # test whether current user is the comment's creator
-                if user == deleteComment.user:
-                   deleteComment.delete()
-                   self.redirect('/')
+                if self.get_posts('Comments', editKey):
+                    deleteComment = self.get_posts('Comments', editKey)
+                    # test whether current user is the comment's creator
+                    if user == deleteComment.user:
+                        deleteComment.delete()
+                        self.render('singlepost.html', post=post, user=user,
+                                    comments=comments)
+                    else:
+                        message = "You are not the creator of this comment."
+                        self.render_Html(post, user, comments, editKey,
+                                         task, message)
                 else:
-                    message = "You are not the creator of this comment."
-                    self.render_Html(post, user, comments, editKey,
-                                     task, message)
+                    self.render('singlepost.html', post=post, user=user,
+                                 comments=comments)
             else:
                 # creates new comment
                 error = False
                 user = self.get_username("username")
                 title = self.request.get('Ctitle')
                 comment = self.request.get('comment')  # form comment
-                comments = self.get_post_comments('Comments', postid)  # comments stored in db
+               # comments = self.get_post_comments('Comments', postid)  # comments stored in db
                 post = self.get_posts('UsersBlogPost', postid)
                 if self.test_for_none(comment) or self.test_for_none(title):
                     error = True
