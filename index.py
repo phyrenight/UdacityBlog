@@ -120,20 +120,21 @@ class MainPage(Handler):
             self.redirect('/login')
 
     def post(self):
-        user = self.get_username('username')
-        title = self.request.get("title")
-        rant = self.request.get("rant")
-
-    	if not title or not rant:
-            error = True
-            self.render_Html(title, rant, error, user)
-
+        if self.get_username('username'):
+            user = self.get_username('username')
+            title = self.request.get("title")
+            rant = self.request.get("rant")
+    	    if not title or not rant:
+                error = True
+                self.render_Html(title, rant, error, user)
+            else:
+                postBlog = UsersBlogPost(title=title, bpost=rant)  # add user
+                postBlog.user = user
+                postBlog.put()
+                page = "/blog/{}".format(str(postBlog.key().id()))
+                self.redirect(page)
         else:
-            postBlog = UsersBlogPost(title=title, bpost=rant)  # add user
-            postBlog.user = user
-            postBlog.put()
-            page = "/blog/{}".format(str(postBlog.key().id()))
-            self.redirect(page)
+            self.redirect('/login')
 
 
 class BlogPage(Handler):
@@ -156,21 +157,23 @@ class BlogPage(Handler):
         title = self.request.get("Ctitle")
         comment = self.request.get("comment")
         user = self.get_username('username')
-        if title is None or comment is None:
-            error = True
-            self.render('blogpost.html', Ctitle=title, comment=comment,
+        if self.get_username('username'):
+            if title is None or comment is None:
+                error = True
+                self.render('blogpost.html', Ctitle=title, comment=comment,
                         posts=posts, comments=Comments, user=user)
 
-        else:
-            title = self.request.get("Ctitle")
-            comment = self.request.get("comment")
-            postid = self.request.get("postid")
-            userComment = Comments(user=user, comment=comment, title=title,
+            else:
+                title = self.request.get("Ctitle")
+                comment = self.request.get("comment")
+                postid = self.request.get("postid")
+                userComment = Comments(user=user, comment=comment, title=title,
                                    commentId=postid)
-            userComment.put()
-            self.render('blogpost.html', posts=posts, comments=comments,
+                userComment.put()
+                self.render('blogpost.html', posts=posts, comments=comments,
                         user=user)
-
+        else:
+            self.redirect('/login')
 
 class EditPost(Handler):
     """
@@ -190,24 +193,27 @@ class EditPost(Handler):
             self.render_Html(title=title, rant=rant, user=user)
 
         else:
-            self.redirect('/login')
+            self.redirect('/')
 
     def post(self, postids):
-        user = self.get_username('username')
-        title = self.request.get("title")
-        rant = self.request.get("rant")
-        if title is None or rant is None:
-            error = True
-            self.render_Html(title=title, rant=rant, error=error, user=user)
-        else:
-            post = self.get_posts('UsersBlogPost', postids)
-            if user == post.user:
-                post.title = title
-                post.bpost = rant
-                post.put()
-                self.redirect("/")
+        if self.get_username('username'):
+            user = self.get_username('username')
+            title = self.request.get("title")
+            rant = self.request.get("rant")
+            if title is None or rant is None:
+                error = True
+                self.render_Html(title=title, rant=rant, error=error, user=user)
             else:
-                self.redirect("/login")
+                post = self.get_posts('UsersBlogPost', postids)
+                if user == post.user:
+                    post.title = title
+                    post.bpost = rant
+                    post.put()
+                    self.redirect("/")
+                else:
+                    self.redirect("/login")
+        else:
+            self.redirect('/login')
 
 
 class DeletePost(Handler):
@@ -444,7 +450,7 @@ class Logout(Handler):
     def get(self):
         self.response.headers.add_header('Set-Cookie',
                                          "username=; Path=/")
-        self.redirect('/')
+        self.redirect('/login')
 
 app = webapp2.WSGIApplication([('/blogform', MainPage),
                               ('/', BlogPage),  # main page
