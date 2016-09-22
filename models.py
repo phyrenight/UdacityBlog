@@ -28,7 +28,7 @@ class Comments(db.Model):
     comment = db.TextProperty(required=True)
     dateTime = db.DateTimeProperty(auto_now_add=True)
     title = db.StringProperty(required=True)
-    commentId = db.StringProperty(required=True) # relatted to blog post
+    commentId = db.StringProperty(required=True) # related to blog post
 
     @classmethod
     def createComment(cls):

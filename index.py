@@ -103,6 +103,9 @@ class Handler(webapp2.RequestHandler):
         """
         return db.GqlQuery("select * from {}".format(table))
 
+    def get_post_comments(self, table, postId):
+        return db.GqlQuery("select * from Comments WHERE commentId=:1", postId)
+
 
 class MainPage(Handler):
     """
@@ -145,12 +148,12 @@ class BlogPage(Handler):
     def get(self):
         posts = self.get_query("UsersBlogPost")
         comments = self.get_query("Comments")
-        user = self.get_username("username")  # Test currently working on
+        user = self.get_username("username")  
         self.render('blogpost.html', posts=posts, comments=comments, user=user)
 
     def post(self):
         """
-            test
+            
         """
         posts = self.get_query("UsersBlogPost")
         comments = self.get_query("Comments")
@@ -185,15 +188,17 @@ class EditPost(Handler):
 
     def get(self, postids):
         if self.get_username('username'):
-            edit = self.request.get("edit")
-            post = self.get_posts('UsersBlogPost', postids)
-            rant = post.bpost
-            title = post.title
             user = self.get_username('username')
-            self.render_Html(title=title, rant=rant, user=user)
-
+            post = self.get_posts('UsersBlogPost', postids)
+            if user == post.user:
+                edit = self.request.get("edit")
+                post = self.get_posts('UsersBlogPost', postids)
+                rant = post.bpost
+                title = post.title
+                user = self.get_username('username')
+                self.render_Html(title=title, rant=rant, user=user)
         else:
-            self.redirect('/')
+            self.redirect('/login')
 
     def post(self, postids):
         if self.get_username('username'):
@@ -260,22 +265,26 @@ class BlogPost(Handler):
                     editKey=testKey, task=task, message=message)
 
     def get(self, postid):
-        user = self.get_username('username')
-        comments = self.get_query('Comments')
-        post = self.get_posts('UsersBlogPost', postid)
-        task = self.request.get('task')
-        if task == "EditComment":
-            editKey = self.request.get('edit')
-            testKey = db.Key.from_path('Comments', int(editKey))
-            self.render_Html(post, user, comments, testKey, task)
+        if self.get_username('username'):
+            user = self.get_username('username')
+            comments = self.get_post_comments('Comments', str(postid))
+          #  print commentTest
+        #    comments = self.get_query('Comments')
+            post = self.get_posts('UsersBlogPost', postid)
+            task = self.request.get('task')
+            if task == "EditComment":
+                editKey = self.request.get('edit')
+                testKey = db.Key.from_path('Comments', int(editKey))
+                self.render_Html(post, user, comments, testKey, task)
 
-        elif task == "DeleteComment":
-            editKey = self.request.get('delete')
-            testKey = db.Key.from_path('Comments', int(editKey))
-            self.render_Html(post, user, comments, testKey, task)
-
+            elif task == "DeleteComment":
+                editKey = self.request.get('delete')
+                testKey = db.Key.from_path('Comments', int(editKey))
+                self.render_Html(post, user, comments, testKey, task)
+            else:
+                self.render_Html(post, user, comments)
         else:
-            self.render_Html(post, user, comments)
+            self.redirect('/login')
 
     def test_for_none(self, item):  # move to handle and update other classes
         if item is None or item == "":
@@ -284,54 +293,56 @@ class BlogPost(Handler):
     def post(self, postid):
         if self.get_username('username'):
             user = self.get_username('username')
-        task = self.request.get('task')
-        post = self.get_posts('UsersBlogPost', postid)
-        comments = self.get_query('Comments')
-        if task == 'EditComment':
-            editKey = self.request.get('edit')
-            Etitle = self.request.get('Etitle')
-            Ecomments = self.request.get('Ecomment')
-            commentEdit = self.get_posts('Comments', editKey)
-            commentEdit.comment = Ecomments
-            commentEdit.title = Etitle
-            # test whether current user is the comment's creator
-            if user == commentEdit.user:
-                commentEdit.put()
-                return self.redirect('/')
-            else:
-                editKey = self.request.get('edit')
-                message = "You are not the creator of this comment."
-                self.render_Html(post, user, comments, editKey,
-                                 task, message)
-
-        elif task == 'DeleteComment':
-            editKey = self.request.get('delete')
-            deleteComment = self.get_posts('Comments', editKey)
-            # test whether current user is the comment's creator
-            if user == deleteComment.user:
-                deleteComment.delete()
-                self.redirect('/')
-            else:
-                message = "You are not the creator of this comment."
-                self.render_Html(post, user, comments, editKey,
-                                 task, message)
-        else:
-            error = False
-            user = self.get_username("username")
-            title = self.request.get('Ctitle')
-            comment = self.request.get('comment')  # form comment
-            comments = self.get_query('Comments')  # comments stored in db
+            task = self.request.get('task')
             post = self.get_posts('UsersBlogPost', postid)
-            if self.test_for_none(comment) or self.test_for_none(title):
-                error = True
-                self.redirect('/blog/{}'.format(postid))
-            else:
-                comment = Comments(user=user, comment=comment, title=title,
-                                   commentId=str(postid))
-                comment.put()
-                self.render('singlepost.html', post=post, user=user,
-                            comments=comments)
+            comments = self.get_post_comments('Comments', postid)
+            if task == 'EditComment':
+                editKey = self.request.get('edit')
+                Etitle = self.request.get('Etitle')
+                Ecomments = self.request.get('Ecomment')
+                commentEdit = self.get_posts('Comments', editKey)
+                commentEdit.comment = Ecomments
+                commentEdit.title = Etitle
+                # test whether current user is the comment's creator
+                if user == commentEdit.user:
+                    commentEdit.put()
+                    return self.redirect('/')
+                else:
+                    editKey = self.request.get('edit')
+                    message = "You are not the creator of this comment."
+                    self.render_Html(post, user, comments, editKey,
+                                     task, message)
 
+            elif task == 'DeleteComment':
+                editKey = self.request.get('delete')
+                deleteComment = self.get_posts('Comments', editKey)
+                # test whether current user is the comment's creator
+                if user == deleteComment.user:
+                   deleteComment.delete()
+                   self.redirect('/')
+                else:
+                    message = "You are not the creator of this comment."
+                    self.render_Html(post, user, comments, editKey,
+                                     task, message)
+            else:
+                # creates new comment
+                error = False
+                user = self.get_username("username")
+                title = self.request.get('Ctitle')
+                comment = self.request.get('comment')  # form comment
+                comments = self.get_post_comments('Comments', postid)  # comments stored in db
+                post = self.get_posts('UsersBlogPost', postid)
+                if self.test_for_none(comment) or self.test_for_none(title):
+                    error = True
+                    self.redirect('/blog/{}'.format(postid))
+                else:
+                    comment = Comments(user=user, comment=comment, title=title,
+                                       commentId=str(postid))
+                    comment.put()
+                    self.render('singlepost.html', post=post, user=user,
+                                comments=comments)
+        else:
+            self.redirect("/login")
 
 class Likes(Handler):
     def get(self):
@@ -344,15 +355,16 @@ class Likes(Handler):
         postid = self.request.get("like")
         if self.get_username('username'):
             username = self.get_username('username')
-            like = self.get_posts('UsersBlogPost', int(postid))    
+            like = self.get_posts('UsersBlogPost', int(postid))
             if username in like.likes:
-                numLikes = len(like.likes)
+               # numLikes = len(like.likes)
                 self.render('blogpost.html', posts=posts, comments=comments, user=user)
             else:
                 if username != like.user:
                     like.likes.append(username)
                     like.put()
-                    self.redirect('/')
+                  #  numLikes = len(like.likes)
+                    self.render('blogpost.html', posts=posts, comments=comments, user=user)
         else:
             self.redirect('/login')
 
