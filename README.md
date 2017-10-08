@@ -9,7 +9,7 @@ To run this project you will need:
 ## Setup
 download or clone the repository
 
-## To run program
+## To run
 if running on linux you may need to add app engine to your path.
 example export PATH=$PATH:/home/YOURNAME/programming/"app engine"/google_appengine/
 
@@ -23,4 +23,5 @@ type `localhost:8080/Blog` into the address bar
 You must first create an account.
 Once logged in you can make a post/comment or post
 
-##To visit my Blog click [here](https://practice1-1247.appspot.com/blog)
+## To visit my Blog
+click [here](https://practice1-1247.appspot.com/blog)
